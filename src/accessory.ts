@@ -83,7 +83,7 @@ export class NestAccessory {
             `${this.accessory.displayName} ${name}`,
             `${this.accessory.displayName} ${name}`,
           )
-        : this.accessory.addService(serviceType, this.accessory.displayName));
+        : this.accessory.addService(serviceType as unknown as Service));
     return service;
   }
 

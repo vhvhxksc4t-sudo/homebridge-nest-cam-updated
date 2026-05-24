@@ -1,38 +1,28 @@
 {
   "displayName": "Homebridge Nest Cam",
-  "name": "homebridge-nest-cam",
-  "version": "7.5.4",
-  "description": "Nest cam plugin for homebridge: https://homebridge.io/",
+  "name": "homebridge-nest-cam-updated",
+  "version": "7.5.5",
+  "description": "Nest cam plugin for homebridge: https://homebridge.io/ — fork of homebridge-nest-cam updated for Node 22+ and Homebridge 2.x",
   "main": "dist/index.js",
   "license": "GPL-3.0",
   "author": "Brandawg93",
-  "funding": [
-    {
-      "type": "github",
-      "url": "https://github.com/sponsors/Brandawg93"
-    },
-    {
-      "type": "paypal",
-      "url": "https://www.paypal.com/donate/?business=CEYYGVB7ZZ764&item_name=homebridge-nest-cam"
-    }
+  "contributors": [
+    "vhvhxksc4t"
   ],
   "bin": {
     "homebridge-nest-cam": "dist/cli.js"
   },
   "scripts": {
     "clean": "npm run rimraf ./dist ./coverage",
-    "build": "npm run clean && tsc && ng build",
-    "deploy": "./dev/deploy.sh",
+    "build": "npm run clean && tsc",
     "packlist": "npm pack --dry-run && rm *.tgz",
     "format": "prettier --write src/**/*.ts",
     "test": "jest --coverage",
     "watch:tests": "jest --watch",
     "lint": "eslint src/**/*.ts --fix",
-    "prepare": "npm run clean && tsc && ng build --configuration production",
+    "prepare": "npm run clean && tsc",
     "prepublishOnly": "npm run lint",
     "postpublish": "npm run clean",
-    "ng-start": "ng serve",
-    "ng-build": "ng build",
     "rimraf": "./node_modules/rimraf/bin.js"
   },
   "keywords": [
@@ -44,13 +34,20 @@
     "camera",
     "smart"
   ],
-  "repository": "github:Brandawg93/homebridge-nest-cam",
-  "bugs": {
-    "url": "https://github.com/Brandawg93/homebridge-nest-cam/issues"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vhvhxksc4t-sudo/homebridge-nest-cam-updated.git"
   },
+  "bugs": {
+    "url": "https://github.com/vhvhxksc4t-sudo/homebridge-nest-cam-updated/issues"
+  },
+  "homepage": "https://github.com/vhvhxksc4t-sudo/homebridge-nest-cam-updated#readme",
   "engines": {
-    "node": ">=10",
-    "homebridge": ">=1.1.3"
+    "node": ">=22.0.0",
+    "homebridge": ">=1.8.0"
+  },
+  "peerDependencies": {
+    "homebridge": "^1.8.0 || ^2.0.0"
   },
   "files": [
     "LICENSE",
@@ -59,7 +56,6 @@
     "config.schema.json"
   ],
   "dependencies": {
-    "@homebridge/plugin-ui-utils": "^0.0.19",
     "axios": "^1.2.1",
     "base64url": "^3.0.1",
     "execa": "^5.1.1",
@@ -69,20 +65,8 @@
     "ws": "^7.5.9"
   },
   "devDependencies": {
-    "@angular-builders/jest": "~13.0.2",
-    "@angular-devkit/build-angular": "~13.1.2",
-    "@angular/animations": "~13.1.1",
-    "@angular/cli": "~13.1.2",
-    "@angular/common": "~13.1.1",
-    "@angular/compiler": "~13.1.1",
-    "@angular/compiler-cli": "~13.1.1",
-    "@angular/core": "~13.1.1",
-    "@angular/forms": "~13.1.1",
-    "@angular/platform-browser": "~13.1.1",
-    "@angular/platform-browser-dynamic": "~13.1.1",
-    "@angular/router": "~13.1.1",
     "@types/jest": "^29.0.3",
-    "@types/node": "^18.7.20",
+    "@types/node": "^22.0.0",
     "@types/pbf": "^3.0.2",
     "@types/ws": "^8.5.3",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
@@ -91,16 +75,13 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jest": "^27.0.4",
     "eslint-plugin-prettier": "^4.2.1",
-    "homebridge": "^1.5.0",
+    "homebridge": "^2.0.0",
     "jest": "^28.1.3",
-    "jest-preset-angular": "^12.2.2",
     "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
-    "rxjs": "~7.5.6",
     "ts-jest": "^28.0.8",
     "ts-node": "~10.9.1",
     "tslib": "^2.4.0",
-    "typescript": "^4.5.5",
-    "zone.js": "~0.11.8"
+    "typescript": "^5.0.0"
   }
 }
