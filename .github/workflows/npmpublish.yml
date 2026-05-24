@@ -3,17 +3,27 @@ name: Publish
 on:
   release:
     types: [published]
+
 jobs:
   publish-npm:
-    if: "!github.event.release.prerelease"
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
-      - uses: actions/checkout@v3.0.2
-      - uses: actions/setup-node@v3.3.0
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 22
           registry-url: https://registry.npmjs.org/
-      - run: npm ci
-      - run: npm publish
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - name: Publish stable
+        if: "!github.event.release.prerelease"
+        run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish beta
+        if: github.event.release.prerelease
+        run: npm publish --tag beta
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
