@@ -49,6 +49,9 @@
   "peerDependencies": {
     "homebridge": "^1.8.0 || ^2.0.0"
   },
+  "overrides": {
+    "tar": "^7.5.7"
+  },
   "files": [
     "LICENSE",
     "dist/**/*",
