@@ -245,9 +245,12 @@ export class NestCam extends EventEmitter {
         this.alertFailures++;
       }
       this.alertsSend = false;
-      setTimeout(() => {
-        this.alertsSend = true;
-      }, this.alertInterval * Math.pow(this.alertFailures, 2));
+      setTimeout(
+        () => {
+          this.alertsSend = true;
+        },
+        this.alertInterval * Math.pow(this.alertFailures, 2),
+      );
     }
   }
 

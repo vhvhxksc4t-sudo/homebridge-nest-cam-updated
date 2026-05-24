@@ -18,14 +18,22 @@ export function handleError(log: Logging | undefined, error: any, message: strin
     if (status >= 500 || status === 404) {
       log?.debug(`${errMsg}\n${addendum}`);
     } else {
-      debug ? log?.debug(`${errMsg}\n${addendum}`) : log?.error(`${errMsg}\n${addendum}`);
+      if (debug) {
+        log?.debug(`${errMsg}\n${addendum}`);
+      } else {
+        log?.error(`${errMsg}\n${addendum}`);
+      }
     }
   } else if (error.code) {
     const errMsg = `${message}: ${error.code}`;
     if (error.code === 'ECONNRESET' || error.code === 'EAI_AGAIN') {
       log?.debug(`${errMsg}\n${addendum}`);
     } else {
-      debug ? log?.debug(`${errMsg}\n${addendum}`) : log?.error(`${errMsg}\n${addendum}`);
+      if (debug) {
+        log?.debug(`${errMsg}\n${addendum}`);
+      } else {
+        log?.error(`${errMsg}\n${addendum}`);
+      }
     }
   } else {
     log?.error(error);

@@ -4,6 +4,15 @@ All notable changes to this fork will be documented here. This is a compatibilit
 
 ---
 
+## [7.5.9] - 2026-05-24
+
+### Fixed (fork)
+- Resolved `npm install` peer dependency conflict: `eslint-plugin-jest@27` required `@typescript-eslint/eslint-plugin@^5`; updated to `eslint-plugin-jest@^28`.
+- Bumped ESLint tool chain to fully support TypeScript 5: `eslint@^8.57.0`, `eslint-plugin-jest@^28.0.0`, `eslint-plugin-prettier@^5.0.0`, `prettier@^3.0.0`.
+- Converted ternary statement expressions in `endpoints.ts` and a short-circuit `&&` statement in `streamer.ts` to explicit `if` blocks, satisfying the stricter `@typescript-eslint/no-unused-expressions` rule in v8.
+
+---
+
 ## [7.5.6] - 2026-05-22
 
 ### Added (fork)

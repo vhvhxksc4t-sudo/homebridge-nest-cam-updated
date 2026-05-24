@@ -334,7 +334,9 @@ export class NexusStreamer {
         this.log?.debug('Using HIGH quality stream.');
         break;
     }
-    this.cameraInfo.properties['audio.enabled'] && this.ffmpegAudio && otherProfiles.push(StreamProfile.AUDIO_AAC);
+    if (this.cameraInfo.properties['audio.enabled'] && this.ffmpegAudio) {
+      otherProfiles.push(StreamProfile.AUDIO_AAC);
+    }
     const request = {
       session_id: this.sessionID,
       profile: primaryProfile,
