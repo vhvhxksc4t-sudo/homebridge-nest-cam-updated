@@ -1,62 +1,48 @@
-<p align="center">
-  <a href="https://github.com/homebridge/verified/blob/master/verified-plugins.json"><img alt="Homebridge Verified" src="https://raw.githubusercontent.com/Brandawg93/homebridge-nest-cam/master/branding/Homebridge_x_Nest.svg?sanitize=true" width="500px"></a>
-</p>
-
-# homebridge-nest-cam
-
-⚠️ This project is no longer being maintained. It should still work for older cameras. For newer cameras, see [homebridge-google-nest-sdm](https://github.com/potmat/homebridge-google-nest-sdm).
+# homebridge-nest-cam-updated
 
 View your Nest cams in HomeKit using [Homebridge](https://github.com/homebridge/homebridge) with this plugin.
 
-[![NPM](https://nodei.co/npm/homebridge-nest-cam.png?compact=true)](https://nodei.co/npm/homebridge-nest-cam/)
+This is a maintained fork of [homebridge-nest-cam](https://github.com/Brandawg93/homebridge-nest-cam) by Brandawg93, updated for Node 22+ and Homebridge 2.x.
 
-[![PayPal](https://img.shields.io/badge/paypal-donate-blue?logo=paypal)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=CEYYGVB7ZZ764&item_name=homebridge-nest-cam&currency_code=USD&source=url)
-
-[![verified-by-homebridge](https://img.shields.io/badge/homebridge-verified-blueviolet?color=%2357277C&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5OTIuMDkiIGhlaWdodD0iMTAwMCIgdmlld0JveD0iMCAwIDk5Mi4wOSAxMDAwIj48ZGVmcz48c3R5bGU+LmF7ZmlsbDojZmZmO308L3N0eWxlPjwvZGVmcz48cGF0aCBjbGFzcz0iYSIgZD0iTTk1MC4xOSw1MDguMDZhNDEuOTEsNDEuOTEsMCwwLDEtNDItNDEuOWMwLS40OC4zLS45MS4zLTEuNDJMODI1Ljg2LDM4Mi4xYTc0LjI2LDc0LjI2LDAsMCwxLTIxLjUxLTUyVjEzOC4yMmExNi4xMywxNi4xMywwLDAsMC0xNi4wOS0xNkg3MzYuNGExNi4xLDE2LjEsMCwwLDAtMTYsMTZWMjc0Ljg4bC0yMjAuMDktMjEzYTE2LjA4LDE2LjA4LDAsMCwwLTIyLjY0LjE5TDYyLjM0LDQ3Ny4zNGExNiwxNiwwLDAsMCwwLDIyLjY1bDM5LjM5LDM5LjQ5YTE2LjE4LDE2LjE4LDAsMCwwLDIyLjY0LDBMNDQzLjUyLDIyNS4wOWE3My43Miw3My43MiwwLDAsMSwxMDMuNjIuNDVMODYwLDUzOC4zOGE3My42MSw3My42MSwwLDAsMSwwLDEwNGwtMzguNDYsMzguNDdhNzMuODcsNzMuODcsMCwwLDEtMTAzLjIyLjc1TDQ5OC43OSw0NjguMjhhMTYuMDUsMTYuMDUsMCwwLDAtMjIuNjUuMjJMMjY1LjMsNjgwLjI5YTE2LjEzLDE2LjEzLDAsMCwwLDAsMjIuNjZsMzguOTIsMzlhMTYuMDYsMTYuMDYsMCwwLDAsMjIuNjUsMGwxMTQtMTEyLjM5YTczLjc1LDczLjc1LDAsMCwxLDEwMy4yMiwwbDExMywxMTEsLjQyLjQyYTczLjU0LDczLjU0LDAsMCwxLDAsMTA0TDU0NS4wOCw5NTcuMzV2LjcxYTQxLjk1LDQxLjk1LDAsMSwxLTQyLTQxLjk0Yy41MywwLC45NS4zLDEuNDQuM0w2MTYuNDMsODA0LjIzYTE2LjA5LDE2LjA5LDAsMCwwLDQuNzEtMTEuMzMsMTUuODUsMTUuODUsMCwwLDAtNC43OS0xMS4zMmwtMTEzLTExMWExNi4xMywxNi4xMywwLDAsMC0yMi42NiwwTDM2Ny4xNiw3ODIuNzlhNzMuNjYsNzMuNjYsMCwwLDEtMTAzLjY3LS4yN2wtMzktMzlhNzMuNjYsNzMuNjYsMCwwLDEsMC0xMDMuODZMNDM1LjE3LDQyNy44OGE3My43OSw3My43OSwwLDAsMSwxMDMuMzctLjlMNzU4LjEsNjM5Ljc1YTE2LjEzLDE2LjEzLDAsMCwwLDIyLjY2LDBsMzguNDMtMzguNDNhMTYuMTMsMTYuMTMsMCwwLDAsMC0yMi42Nkw1MDYuNSwyNjUuOTNhMTYuMTEsMTYuMTEsMCwwLDAtMjIuNjYsMEwxNjQuNjksNTgwLjQ0QTczLjY5LDczLjY5LDAsMCwxLDYxLjEsNTgwTDIxLjU3LDU0MC42OWwtLjExLS4xMmE3My40Niw3My40NiwwLDAsMSwuMTEtMTAzLjg4TDQzNi44NSwyMS40MUE3My44OSw3My44OSwwLDAsMSw1NDAsMjAuNTZMNjYyLjYzLDEzOS4zMnYtMS4xYTczLjYxLDczLjYxLDAsMCwxLDczLjU0LTczLjVINzg4YTczLjYxLDczLjYxLDAsMCwxLDczLjUsNzMuNVYzMjkuODFhMTYsMTYsMCwwLDAsNC43MSwxMS4zMmw4My4wNyw4My4wNWguNzlhNDEuOTQsNDEuOTQsMCwwLDEsLjA4LDgzLjg4WiIvPjwvc3ZnPg==)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
-[![certified-hoobs-plugin](https://img.shields.io/badge/HOOBS-Certified-yellow?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5OTIuMDkiIGhlaWdodD0iMTAwMCIgdmlld0JveD0iMCAwIDk5Mi4wOSAxMDAwIj48ZGVmcz48c3R5bGU+LmF7ZmlsbDojZmZmO308L3N0eWxlPjwvZGVmcz48cGF0aCBjbGFzcz0iYSIgZD0iTTk1MC4xOSw1MDguMDZhNDEuOTEsNDEuOTEsMCwwLDEtNDItNDEuOWMwLS40OC4zLS45MS4zLTEuNDJMODI1Ljg2LDM4Mi4xYTc0LjI2LDc0LjI2LDAsMCwxLTIxLjUxLTUyVjEzOC4yMmExNi4xMywxNi4xMywwLDAsMC0xNi4wOS0xNkg3MzYuNGExNi4xLDE2LjEsMCwwLDAtMTYsMTZWMjc0Ljg4bC0yMjAuMDktMjEzYTE2LjA4LDE2LjA4LDAsMCwwLTIyLjY0LjE5TDYyLjM0LDQ3Ny4zNGExNiwxNiwwLDAsMCwwLDIyLjY1bDM5LjM5LDM5LjQ5YTE2LjE4LDE2LjE4LDAsMCwwLDIyLjY0LDBMNDQzLjUyLDIyNS4wOWE3My43Miw3My43MiwwLDAsMSwxMDMuNjIuNDVMODYwLDUzOC4zOGE3My42MSw3My42MSwwLDAsMSwwLDEwNGwtMzguNDYsMzguNDdhNzMuODcsNzMuODcsMCwwLDEtMTAzLjIyLjc1TDQ5OC43OSw0NjguMjhhMTYuMDUsMTYuMDUsMCwwLDAtMjIuNjUuMjJMMjY1LjMsNjgwLjI5YTE2LjEzLDE2LjEzLDAsMCwwLDAsMjIuNjZsMzguOTIsMzlhMTYuMDYsMTYuMDYsMCwwLDAsMjIuNjUsMGwxMTQtMTEyLjM5YTczLjc1LDczLjc1LDAsMCwxLDEwMy4yMiwwbDExMywxMTEsLjQyLjQyYTczLjU0LDczLjU0LDAsMCwxLDAsMTA0TDU0NS4wOCw5NTcuMzV2LjcxYTQxLjk1LDQxLjk1LDAsMSwxLTQyLTQxLjk0Yy41MywwLC45NS4zLDEuNDQuM0w2MTYuNDMsODA0LjIzYTE2LjA5LDE2LjA5LDAsMCwwLDQuNzEtMTEuMzMsMTUuODUsMTUuODUsMCwwLDAtNC43OS0xMS4zMmwtMTEzLTExMWExNi4xMywxNi4xMywwLDAsMC0yMi42NiwwTDM2Ny4xNiw3ODIuNzlhNzMuNjYsNzMuNjYsMCwwLDEtMTAzLjY3LS4yN2wtMzktMzlhNzMuNjYsNzMuNjYsMCwwLDEsMC0xMDMuODZMNDM1LjE3LDQyNy44OGE3My43OSw3My43OSwwLDAsMSwxMDMuMzctLjlMNzU4LjEsNjM5Ljc1YTE2LjEzLDE2LjEzLDAsMCwwLDIyLjY2LDBsMzguNDMtMzguNDNhMTYuMTMsMTYuMTMsMCwwLDAsMC0yMi42Nkw1MDYuNSwyNjUuOTNhMTYuMTEsMTYuMTEsMCwwLDAtMjIuNjYsMEwxNjQuNjksNTgwLjQ0QTczLjY5LDczLjY5LDAsMCwxLDYxLjEsNTgwTDIxLjU3LDU0MC42OWwtLjExLS4xMmE3My40Niw3My40NiwwLDAsMSwuMTEtMTAzLjg4TDQzNi44NSwyMS40MUE3My44OSw3My44OSwwLDAsMSw1NDAsMjAuNTZMNjYyLjYzLDEzOS4zMnYtMS4xYTczLjYxLDczLjYxLDAsMCwxLDczLjU0LTczLjVINzg4YTczLjYxLDczLjYxLDAsMCwxLDczLjUsNzMuNVYzMjkuODFhMTYsMTYsMCwwLDAsNC43MSwxMS4zMmw4My4wNyw4My4wNWguNzlhNDEuOTQsNDEuOTQsMCwwLDEsLjA4LDgzLjg4WiIvPjwvc3ZnPg==)](https://plugins.hoobs.org/plugin/homebridge-nest-cam)
-
-![build](https://github.com/Brandawg93/homebridge-nest-cam/workflows/build/badge.svg)
-[![Discord](https://camo.githubusercontent.com/7494d4da7060081501319a848bbba143cbf6101a/68747470733a2f2f696d672e736869656c64732e696f2f646973636f72642f3433323636333333303238313232363237303f636f6c6f723d373238454435266c6f676f3d646973636f7264266c6162656c3d646973636f7264)](https://discord.gg/pc2pqmh)
-[![Downloads](https://img.shields.io/npm/dt/homebridge-nest-cam?logo=npm)](https://nodei.co/npm/homebridge-nest-cam/)
-
-[![npm (tag)](https://img.shields.io/npm/v/homebridge-nest-cam/latest?logo=npm)](https://www.npmjs.com/package/homebridge-nest-cam/v/latest)
-[![npm (tag)](https://img.shields.io/npm/v/homebridge-nest-cam/test?logo=npm)](https://www.npmjs.com/package/homebridge-nest-cam/v/test)
-[![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/brandawg93/homebridge-nest-cam/latest?logo=github)](https://github.com/Brandawg93/homebridge-nest-cam/releases/latest)
-
-| [FAQ](https://github.com/Brandawg93/homebridge-nest-cam/wiki/FAQ) | [Troubleshooting](https://github.com/Brandawg93/homebridge-nest-cam/wiki/Troubleshooting) | [Error Codes](https://github.com/Brandawg93/homebridge-nest-cam/wiki/Error-Codes)
-|---|---|---|
+[![npm](https://img.shields.io/npm/v/homebridge-nest-cam-updated?logo=npm)](https://www.npmjs.com/package/homebridge-nest-cam-updated)
+[![Build](https://github.com/vhvhxksc4t-sudo/homebridge-nest-cam-updated/actions/workflows/npmbuild.yml/badge.svg)](https://github.com/vhvhxksc4t-sudo/homebridge-nest-cam-updated/actions/workflows/npmbuild.yml)
 
 ## Notes
-- This plugin *does not* work with the latest Nest cameras. If you do not see it in the Nest app, then it will not show in this plugin. More info can be found at [#440](https://github.com/Brandawg93/homebridge-nest-cam/issues/440).
+- This plugin works with **legacy Nest cameras** connected to a Google account. If your camera does not appear in the Nest section of the Google Home app, it will not work with this plugin. For newer Google Nest cameras, see [homebridge-google-nest-sdm](https://github.com/potmat/homebridge-google-nest-sdm).
+- Google account authentication only. Legacy Nest account (issueToken/cookies) is not supported.
 
 ## Installation
-1. Install this plugin using: `npm install -g --unsafe-perm homebridge-nest-cam`
-2. Add google authentication to `config.json`
-3. Run [Homebridge](https://github.com/homebridge/homebridge)
-4. Login with [homebridge-config-ui-x](https://www.npmjs.com/package/homebridge-config-ui-x) or use the [manual authentication method](https://github.com/Brandawg93/homebridge-nest-cam/wiki/Manual-Authentication).
+1. Install via Homebridge UI (search `homebridge-nest-cam-updated`) or run: `npm install -g homebridge-nest-cam-updated`
+2. Use the plugin's setup UI to sign in with your Google account, or configure manually (see below)
+3. Restart [Homebridge](https://github.com/homebridge/homebridge)
+
+### Upgrading from homebridge-nest-cam
+Your existing `config.json` platform block is fully compatible — the platform name is still `Nest-cam`. No changes needed.
 
 ### FFmpeg
 By default, `libx264` is used as the h264 encoder. If you would like to use a hardware-accelerated encoder instead, refer to the [h264 Hardware Encoders Wiki](https://github.com/Brandawg93/homebridge-nest-cam/wiki/h264-Hardware-Encoders).
 
-### Setting up the Config.json
-#### refreshToken
-Google Accounts are configured using a `"refreshToken"` string in `config.json`. An example is shown below. The field will be generated automatically when using [homebridge-config-ui-x](https://www.npmjs.com/package/homebridge-config-ui-x), otherwise, it can be found in your Nest account using the [manual authentication method](https://github.com/Brandawg93/homebridge-nest-cam/wiki/Manual-Authentication).
+## Configuration
 
-```
+### Via Homebridge UI
+Open the plugin settings and follow the Google sign-in flow. Your refresh token will be saved automatically.
+
+### Manual (config.json)
+Add a `refreshToken` obtained via the [manual authentication method](https://github.com/Brandawg93/homebridge-nest-cam/wiki/Manual-Authentication):
+
+```json
 {
     "platform": "Nest-cam",
+    "refreshToken": "1//01T_...",
     "options": {
       "ffmpegCodec": "libx264",
       "motionDetection": true,
-      "streamingSwitch": true,
-      "disableAudio": false
-    },
-    "refreshToken": "1//01T_..."
+      "streamingSwitch": true
+    }
 }
 ```
 
-#### options
-Extra options can be enabled/disabled depending on which switches and sensors you would like to see in the Home app. Here is the current list of available options:
+### Options
 
 | Name              | Description                                                         | Type             |
 |-------------------|---------------------------------------------------------------------|------------------|
@@ -73,25 +59,21 @@ Extra options can be enabled/disabled depending on which switches and sensors yo
 | chimeSwitch       | Enable/disable the ability to turn the doorbell chime on or off     | boolean          |
 | audioSwitch       | Enable/disable the ability to turn the camera audio on or off       | boolean          |
 | pathToFfmpeg      | Specify the path to a custom FFmpeg binary                          | string           |
-| cameras           | Specify the camera UUID  of which cameras to see                    | array            |
-| structures        | Specify the structure ID of which structures' cameras to see        | array            |
+| cameras           | Specify the camera UUIDs of which cameras to show                   | array            |
+| structures        | Specify the structure IDs of which structures' cameras to show      | array            |
 
 ## Features
-- View cameras within homekit.
-- Receive notifications and set routines for motion or when the doorbell is rang.
-- Receive notifications for specific motion events.
-- Listen and talk back to people on equipped cameras.
-- Enable/disable the indoor chime on Hello doorbells.
-
-## Join the Discord
-Unfortunately, there is no way for me to test every subscription, camera type, and feature. If you would like to help me test new features and enhancements, or if you have general questions or need support, join the official [Homebridge Discord Server](https://discord.gg/pc2pqmh).
+- View cameras within HomeKit
+- Receive notifications and set automations for motion or doorbell rings
+- Receive notifications for specific motion event types
+- Listen and talk back to people on equipped cameras
+- Enable/disable the indoor chime on Nest Hello doorbells
 
 ## Credits
-This plugin was originally developed by [KhaosT](https://github.com/KhaosT).
+Original plugin developed by [Brandawg93](https://github.com/Brandawg93), originally based on work by [KhaosT](https://github.com/KhaosT).
 
-This plugin was converted to typescript using both [homebridge-ring](https://github.com/dgreif/ring) and [homebridge-examples](https://github.com/homebridge/homebridge-examples).
+Converted to TypeScript using [homebridge-ring](https://github.com/dgreif/ring) and [homebridge-examples](https://github.com/homebridge/homebridge-examples).
 
-## Donate to Support homebridge-nest-cam
-This plugin was made with you in mind. If you would like to show your appreciation for its continued development, please consider [sponsoring me on Github](https://github.com/sponsors/Brandawg93).
+---
 
-<sub><sup>**Disclaimer:** This plugin and its contributers are not affiliated with Google LLC or Nest Labs in any way.</sub></sup>
+<sub><sup>**Disclaimer:** This plugin and its contributors are not affiliated with Google LLC or Nest Labs in any way.</sub></sup>
