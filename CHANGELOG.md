@@ -4,6 +4,17 @@ All notable changes to this fork will be documented here. This is a compatibilit
 
 ---
 
+## [7.5.6] - 2026-05-22
+
+### Added (fork)
+- Plain HTML/JS custom Homebridge UI replacing the original Angular 13 login wizard.
+  Provides the same three-state flow: loading → Google OAuth login → authenticated
+  settings form. Dynamic schema filtering (doorbell, motion, face, zone, camera, and
+  structure options pruned based on what the account actually has) is fully preserved.
+- `@homebridge/plugin-ui-utils` restored as a runtime dependency.
+
+---
+
 ## [7.5.5] - 2026-05-22
 
 ### Changed (fork — compatibility update)

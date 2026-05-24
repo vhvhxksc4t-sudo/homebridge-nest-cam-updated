@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    /* ── Layout ─────────────────────────────────────────────────────────── */
+    #login-section,
+    #auth-section { display: none; }
+
+    /* ── Profile bar ────────────────────────────────────────────────────── */
+    .profile-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(128,128,128,0.2);
+    }
+    .profile-info { display: flex; align-items: center; gap: 10px; }
+    .profile-img  { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+    .profile-name { font-weight: 600; margin: 0; font-size: 0.95em; }
+    .profile-email{ font-size: 0.8em; opacity: 0.65; margin: 0; }
+
+    /* ── Login ──────────────────────────────────────────────────────────── */
+    .step-list    { padding-left: 20px; margin: 12px 0 16px; }
+    .step-list li { margin-bottom: 8px; }
+    #login-error  { color: #dc3545; margin-top: 10px; font-size: 0.9em; min-height: 1.2em; }
+  </style>
+</head>
+<body>
+
+  <!-- ── Login ────────────────────────────────────────────────────────── -->
+  <div id="login-section">
+    <div class="alert alert-info" role="alert">
+      <strong>Note:</strong> This setup requires a Google account linked to Nest.
+      If you use a legacy Nest account, configure manually via
+      <a href="https://github.com/Brandawg93/homebridge-nest-cam/wiki/Manual-Authentication"
+         target="_blank" rel="noopener noreferrer">the wiki</a>.
+    </div>
+
+    <ol class="step-list">
+      <li>
+        Click <a id="oauth-link" href="#" target="_blank" rel="noopener noreferrer"><strong>HERE</strong></a>
+        to sign in with Google and authorise Nest access.
+      </li>
+      <li>After signing in, copy the authorisation code shown and paste it below:</li>
+    </ol>
+
+    <div class="form-group">
+      <label class="control-label">
+        Authorisation Code <strong class="text-danger">*</strong>
+      </label>
+      <input id="auth-code" type="text" class="form-control" placeholder="4/0AX…" autocomplete="off" />
+    </div>
+
+    <div class="text-center" style="margin-top:12px;">
+      <button id="login-btn" class="btn btn-primary" disabled>Sign In</button>
+    </div>
+    <p id="login-error" class="text-center"></p>
+  </div>
+
+  <!-- ── Authenticated ─────────────────────────────────────────────────── -->
+  <div id="auth-section">
+    <div class="profile-bar">
+      <div class="profile-info">
+        <img id="profile-img" class="profile-img" src="" alt=""
+             onerror="this.style.display='none'" style="display:none" />
+        <div>
+          <p id="profile-name"  class="profile-name"></p>
+          <p id="profile-email" class="profile-email"></p>
+        </div>
+      </div>
+      <button id="signout-btn" class="btn btn-sm btn-danger">Sign Out</button>
+    </div>
+    <div id="settings-form"></div>
+  </div>
+
+  <script>
+    /* ------------------------------------------------------------------ */
+    /*  Helpers                                                             */
+    /* ------------------------------------------------------------------ */
+    const hb = window.homebridge;
+
+    let currentConfig = {};
+    let formHelper    = null;
+
+    /* ------------------------------------------------------------------ */
+    /*  Init                                                                */
+    /* ------------------------------------------------------------------ */
+    async function init() {
+      hb.showSpinner();
+
+      currentConfig = (await hb.getPluginConfig())[0] || {};
+      const ft = currentConfig.options?.fieldTest || false;
+
+      // Pre-load the OAuth URL so the link is ready before the user needs it.
+      hb.request('/generateToken', { ft }).then((url) => {
+        document.getElementById('oauth-link').href = url;
+      }).catch(() => {});
+
+      if (currentConfig.refreshToken) {
+        const ok = await hb.request('/auth', {
+          refreshToken: currentConfig.refreshToken,
+          ft,
+        }).catch(() => false);
+
+        if (ok) {
+          await showAuthenticatedUI();
+          return;
+        }
+      }
+
+      showLoginUI();
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Login state                                                         */
+    /* ------------------------------------------------------------------ */
+    function showLoginUI() {
+      document.getElementById('login-section').style.display = 'block';
+      document.getElementById('auth-section').style.display  = 'none';
+
+      const codeInput = document.getElementById('auth-code');
+      const loginBtn  = document.getElementById('login-btn');
+
+      // Enable the button only when the code looks plausible (contains "/").
+      codeInput.addEventListener('input', () => {
+        loginBtn.disabled = !codeInput.value.includes('/');
+      });
+
+      loginBtn.addEventListener('click', doLogin);
+      hb.hideSpinner();
+    }
+
+    async function doLogin() {
+      const code     = document.getElementById('auth-code').value.trim();
+      const errEl    = document.getElementById('login-error');
+      const loginBtn = document.getElementById('login-btn');
+      const ft       = currentConfig.options?.fieldTest || false;
+
+      errEl.textContent  = '';
+      loginBtn.disabled  = true;
+      loginBtn.textContent = 'Signing in…';
+      hb.showSpinner();
+
+      try {
+        const refreshToken = await hb.request('/getRefreshToken', { code, ft });
+
+        if (!refreshToken) {
+          throw new Error('Could not retrieve a refresh token. Check the code and try again.');
+        }
+
+        const authenticated = await hb.request('/auth', { refreshToken, ft });
+        if (!authenticated) {
+          throw new Error('Authentication failed. The token may have expired — please try again.');
+        }
+
+        currentConfig.refreshToken = refreshToken;
+        await hb.updatePluginConfig([currentConfig]);
+        await hb.savePluginConfig();
+
+        await showAuthenticatedUI();
+
+      } catch (err) {
+        errEl.textContent    = err.message || String(err);
+        loginBtn.disabled    = false;
+        loginBtn.textContent = 'Sign In';
+        hb.hideSpinner();
+      }
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Authenticated state                                                 */
+    /* ------------------------------------------------------------------ */
+    async function showAuthenticatedUI() {
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('auth-section').style.display  = 'block';
+
+      // Profile — best-effort, non-blocking.
+      hb.request('/owner').then((owner) => {
+        if (!owner) return;
+        document.getElementById('profile-name').textContent  = owner.name  || '';
+        document.getElementById('profile-email').textContent = owner.email || '';
+        if (owner.profile_image_url) {
+          const img = document.getElementById('profile-img');
+          img.src   = owner.profile_image_url;
+          img.style.display = '';
+        }
+      }).catch(() => {});
+
+      await buildSettingsForm();
+
+      document.getElementById('signout-btn')
+        .addEventListener('click', doSignout, { once: true });
+
+      hb.hideSpinner();
+    }
+
+    async function buildSettingsForm() {
+      const config = (await hb.getPluginConfig())[0] || {};
+      let schema   = (await hb.getPluginConfigSchema()).schema;
+      if (!schema) return;
+
+      schema = await filterSchema(schema);
+
+      if (formHelper) {
+        formHelper.end();
+        formHelper = null;
+      }
+
+      formHelper = hb.createForm({ schema }, config);
+      formHelper.onChange(async (change) => {
+        await hb.updatePluginConfig([change]);
+      });
+    }
+
+    /**
+     * Remove schema options that don't apply to this account's hardware.
+     * Mirrors the Angular app's modifySchema() logic exactly.
+     */
+    async function filterSchema(schema) {
+      try {
+        const cameras = await hb.request('/cameras');
+        if (!cameras || cameras.length === 0) return schema;
+
+        const props = schema.options?.properties;
+        if (!props) return schema;
+
+        const has = (cap) => cameras.some((c) => c.capabilities.includes(cap));
+        const hasDoorbell = has('indoor_chime');
+        const hasMotion   = has('detectors.on_camera');
+        const hasStranger = has('stranger_detection');
+
+        if (!hasDoorbell) {
+          delete props.doorbellAlerts;
+          delete props.doorbellSwitch;
+          delete props.chimeSwitch;
+          delete props.announcementsSwitch;
+        }
+
+        if (!hasMotion) {
+          delete props.alertCheckRate;
+          delete props.alertCooldownRate;
+          delete props.alertTypes;
+          delete props.importantOnly;
+          delete props.motionDetection;
+        }
+
+        // Enrich alertTypes.oneOf with faces / zones when applicable.
+        const oneOfProp = props.alertTypes?.items?.oneOf;
+        if (oneOfProp) {
+          if (!hasStranger) {
+            props.alertTypes.items.oneOf = oneOfProp.filter((o) =>
+              !['Package Retrieved', 'Package Delivered', 'Face'].includes(o.title)
+            );
+          } else {
+            const faces = await hb.request('/faces').catch(() => null);
+            let enriched = oneOfProp
+              .concat([{ title: 'Face - Unknown', enum: ['Face - Unknown'] }])
+              .filter((o) => o.title !== 'Face');
+            if (faces?.length > 0) {
+              enriched = enriched.concat(
+                faces
+                  .filter((f) => f.name)
+                  .map((f) => ({ title: `Face - ${f.name}`, enum: [`Face - ${f.name}`] }))
+              );
+            }
+            props.alertTypes.items.oneOf = enriched;
+          }
+
+          const zones = await hb.request('/zones').catch(() => null);
+          if (zones?.length > 0) {
+            props.alertTypes.items.oneOf = (props.alertTypes.items.oneOf || oneOfProp)
+              .concat(
+                zones
+                  .filter((z) => z.label)
+                  .map((z) => ({ title: `Zone - ${z.label}`, enum: [`Zone - ${z.label}`] }))
+              )
+              .filter((o) => o.title !== 'Zone');
+          }
+        }
+
+        // Structures — only show the filter if more than one exists.
+        if (props.structures?.items) {
+          const structures = await hb.request('/structures').catch(() => null);
+          if (structures?.length > 1) {
+            props.structures.items.oneOf = structures;
+          } else {
+            delete props.structures;
+          }
+        }
+
+        // Cameras — only show the filter if more than one exists.
+        if (props.cameras?.items) {
+          if (cameras.length > 1) {
+            props.cameras.items.oneOf = cameras.map((c) => ({
+              title: c.name,
+              enum:  [c.uuid],
+            }));
+          } else {
+            delete props.cameras;
+          }
+        }
+
+      } catch (_err) {
+        // Schema filtering is best-effort; fall through with unfiltered schema.
+      }
+
+      return schema;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Sign out                                                            */
+    /* ------------------------------------------------------------------ */
+    async function doSignout() {
+      hb.showSpinner();
+
+      if (formHelper) {
+        formHelper.end();
+        formHelper = null;
+      }
+
+      const config = (await hb.getPluginConfig())[0] || {};
+      config.refreshToken = '';
+      await hb.updatePluginConfig([config]);
+      await hb.savePluginConfig();
+      await hb.request('/logout');
+
+      currentConfig = config;
+
+      // Reset login form state.
+      document.getElementById('auth-code').value   = '';
+      document.getElementById('login-error').textContent = '';
+      document.getElementById('login-btn').disabled    = true;
+      document.getElementById('login-btn').textContent  = 'Sign In';
+
+      showLoginUI();
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Bootstrap                                                           */
+    /* ------------------------------------------------------------------ */
+    init().catch((err) => {
+      hb.hideSpinner();
+      console.error('[homebridge-nest-cam] UI init error:', err);
+    });
+  </script>
+</body>
+</html>
